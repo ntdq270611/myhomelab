@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  mariadb:
+    image: 'jc21/mariadb-aria:latest'
+    container_name: nginx-proxy-database
+    environment:
+      MYSQL_ROOT_PASSWORD: 'PASSWORD'
+      MYSQL_DATABASE: 'npm'
+      MYSQL_USER: 'npm'
+      MYSQL_PASSWORD: 'PASSWORD'
+      MARIADB_AUTO_UPGRADE: '1'
+    volumes:
+      - npm-mysql:/var/lib/mysql
+    networks:
+      - frontend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p'PASSWORD'"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+
+  nginx-proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy
+    dns:
+      - 100.108.27.211
+    ports:
+      - '80:80'
+      - '443:443'
+      - '81:81'
+    environment:
+      DB_MYSQL_HOST: "mariadb"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "PASSWORD"
+      DB_MYSQL_NAME: "npm"
+      DISABLE_IPV6: 'true'
+    volumes:
+      - npm-data:/data
+      - npm-letsencrypt:/etc/letsencrypt
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - frontend
+    restart: unless-stopped
+
+networks:
+  frontend:
+    driver: bridge
+
+volumes:
+  npm-data:
+  npm-letsencrypt:
+  npm-mysql:

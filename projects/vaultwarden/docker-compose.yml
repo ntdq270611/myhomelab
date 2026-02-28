@@ -1,0 +1,23 @@
+# docker-compose.yml
+version: '3'
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    volumes:
+      - vaultwarden-data:/data
+    ports:
+      # Exposes the web vault on port 8080 of the host machine.
+      # Change the first number (e.g., 80:80) if you don't want to use 8080.
+      - "2345:80"
+    environment:
+      # This enables the WebSocket server, which is needed for clients to get real-time updates.
+      WEBSOCKET_ENABLED: "true"
+      # IMPORTANT: After creating your first account, set this to "false" to prevent random signups.
+      SIGNUPS_ALLOWED: "true"
+
+volumes:
+  # This defines the Docker-managed volume for persistent storage.
+  vaultwarden-data:

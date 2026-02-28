@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  speedtest-tracker:
+    image: lscr.io/linuxserver/speedtest-tracker:latest
+    container_name: speedtest-tracker
+    restart: unless-stopped
+    ports:
+      - "1234:80"
+      - "8443:443"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - APP_KEY=base64:DCVPNctfvDwsUwMsvrIvjahCjDaM6ph7oUaoYDmpMM4=
+      - DB_CONNECTION=sqlite
+      - APP_DEBUG=true
+      - SPEEDTEST_SCHEDULE=6 */1 * * *
+      - DISPLAY_TIMEZONE=Asia/Ho_Chi_Minh
+      - APP_TIMEZONE=Asia/Ho_Chi_Minh
+      - APP_URL=https://speedtest.ntdq211.indevs.in
+      - ASSET_URL=https://speedtest.ntdq211.indevs.in
+    volumes:
+      - speedtest_data:/config   # persistent app/config data
+      - speedtest_keys:/config/keys   # persistent SSL keys
+
+volumes:
+  speedtest_data:
+  speedtest_keys:

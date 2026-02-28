@@ -1,0 +1,11 @@
+services:
+  homey-shs:
+    image: ghcr.io/athombv/homey-shs:latest
+    container_name: homey-shs
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - 4589:4589
+    privileged: true
+    volumes:
+      - ~/.homey-shs:/homey/user

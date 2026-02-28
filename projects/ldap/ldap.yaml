@@ -1,0 +1,14 @@
+services:
+  authentik-ldap:
+    image: ghcr.io/goauthentik/ldap:latest
+    container_name: authentik-ldap
+    depends_on:
+      - authentik
+    networks:
+      - media-net
+    ports:
+      - "389:389"
+    environment:
+      AUTHENTIK_HOST: https://192.168.1.215:9444
+      AUTHENTIK_INSECURE: "true"
+      AUTHENTIK_TOKEN: "<LDAP_OUTPOST_TOKEN>"
